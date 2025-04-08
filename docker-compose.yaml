@@ -1,0 +1,90 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    container_name: tasks_postgres
+    environment:
+      POSTGRES_DB: tasks_data
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d tasks_data"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - task_app
+
+  task_api:
+    build: .
+    volumes:
+      - log_data:/var/logs/spring-boot/
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tasks_data
+      SPRING_DATASOURCE_USERNAME: test
+      SPRING_DATASOURCE_PASSWORD: test
+    ports:
+      - "8080:8080"
+    networks:
+      - task_app
+  zookeeper_1:
+    image: zookeeper:3.9.3
+    hostname: zookeeper_1
+    container_name: zookeeper_1
+    restart: "no"
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: nc -z 127.0.0.1 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    networks:
+      - task_app
+  kafka_broker_1:
+    image: confluentinc/cp-kafka:7.9.0
+    hostname: kafka_broker_1
+    container_name: kafka_broker_1
+    restart: on-failure
+    ports:
+      - "29092:29092"
+      - "9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper_1:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker_1:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFAKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+    healthcheck:
+      test: kafka-topics --bootstrap-server localhost:29092 --list
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    depends_on:
+      - zookeeper
+    networks:
+      - task_app
+networks:
+  task_app:
+    driver: bridge
+
+
+volumes:
+  postgres_data:
+  log_data:
+  kafka_data:

@@ -23,8 +23,14 @@ public class KafkaConsumerService {
             groupId = "${spring.kafka.group-id}",
             containerFactory = "kafkaListenerContainerFactory"
     )
-    public void listen(TaskStatusUpdateDto message) {
-        log.info("Получено сообщение из Kafka: taskId={}, status={}", message.getId(), message.getStatus());
-        notificationService.sendStatusChangeEmail(message);
+    public void listen(TaskStatusUpdateDto message, Acknowledgment ack) {
+        try {
+            log.info("Получено сообщение из Kafka: taskId={}, status={}", message.getId(), message.getStatus());
+            notificationService.sendStatusChangeEmail(message);
+        } catch (Exception e) {
+            log.error("Ошибка при получении сообщения из Kafka", e);
+        } finally {
+            ack.acknowledge();
+        }
     }
 }

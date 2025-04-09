@@ -55,11 +55,12 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, TaskStatusUpdateDto> kafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, TaskStatusUpdateDto> kafkaBatchListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, TaskStatusUpdateDto> factory
                 = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(objectConsumerFactory());
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+        factory.setBatchListener(true);
         return factory;
     }
 

@@ -1,5 +1,6 @@
 spring:
   mail:
+    to: vitekman@mail.ru
     host: smtp.yandex.ru
     port: 465
     username: tester-task08@yandex.ru
@@ -27,10 +28,12 @@ spring:
     change-log: classpath:db/changelog/db.changelog-main.yml
     default-schema: public
   kafka:
-   bootstrap-servers: localhost:9092
-   group-id: task-status-group
-   topic:
+    bootstrap-servers: kafka_broker_1:9092
+    group-id: task-status-group
+    topic:
      name: task-status-topic
+    consumer:
+      max-poll-records: 5
 logging:
   level:
     org.apache.kafka: INFO

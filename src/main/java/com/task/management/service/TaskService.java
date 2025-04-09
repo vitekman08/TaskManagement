@@ -71,18 +71,18 @@ public class TaskService {
 
         String oldStatus = existingTask.getStatus();
 
-        existingTask.setTitle(updatedTask.getTitle());
-        existingTask.setDescription(updatedTask.getDescription());
-        existingTask.setUserId(updatedTask.getUserId());
-        existingTask.setStatus(updatedTask.getStatus());
+        existingTask.setTitle(updatedTask.title());
+        existingTask.setDescription(updatedTask.description());
+        existingTask.setUserId(updatedTask.userId());
+        existingTask.setStatus(updatedTask.status());
 
         taskRepository.save(existingTask);
         /* Реализуем отправку сообщения в топик Kafka Producer*/
-        if (!Objects.equals(oldStatus, updatedTask.getStatus())) {
-            log.info("Статус задачи изменен с ({}) -> ({}) , отправляем в Kafka", oldStatus, updatedTask.getStatus());
+        if (!Objects.equals(oldStatus, updatedTask.status())) {
+            log.info("Статус задачи изменен с ({}) -> ({}) , отправляем в Kafka", oldStatus, updatedTask.status());
 
             TaskStatusUpdateDto taskStatusUpdateDto
-                    = new TaskStatusUpdateDto(existingTask.getId(), updatedTask.getStatus());
+                    = new TaskStatusUpdateDto(existingTask.getId(), updatedTask.status());
 
             kafkaTemplate.send(topicName, taskStatusUpdateDto)
                     .whenComplete((result, exception) -> {

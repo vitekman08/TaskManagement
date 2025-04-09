@@ -8,21 +8,9 @@ import lombok.*;
 /**
  * DTO for {@link Task}
  */
-@Value
-@NoArgsConstructor(force = true)
-@AllArgsConstructor
-@Setter
-@Getter
-public class TaskDto {
-    @Schema(hidden = true)
-    Long id;
 
-    @JsonProperty("title")
-    String title;
-    @JsonProperty("description")
-    String description;
-    @JsonProperty("userId")
-    Long userId;
-    @JsonProperty("status")
-    String status;
+
+public record TaskDto(@Schema(hidden = true) Long id, @JsonProperty("title") String title,
+                      @JsonProperty("description") String description, @JsonProperty("userId") Long userId,
+                      @JsonProperty("status") String status) {
 }

@@ -28,24 +28,28 @@ spring:
     change-log: classpath:db/changelog/db.changelog-main.yml
     default-schema: public
   kafka:
-    bootstrap-servers: kafka_broker_1:9092
+    bootstrap-servers: localhost:9092
     group-id: task-status-group
     topic:
      name: task-status-topic
     consumer:
       max-poll-records: 5
-logging:
-  level:
-    org.apache.kafka: INFO
-    root: INFO
-    com:
-      task.management.controllers.TaskController: DEBUG
-  pattern:
-    file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+#logging:
+#  level:
+#    org.apache.kafka: INFO
+#    root: INFO
+#    com:
+#      task.management.controllers.TaskController: DEBUG
+#  pattern:
+#    file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+#    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 springdoc:
   api-docs:
     path: /api/v1
   swagger-ui:
     path: /api/v1/doc
+api:
+  logging:
+    enabled: true
+    level: WARN

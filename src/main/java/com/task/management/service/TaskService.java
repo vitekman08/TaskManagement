@@ -1,9 +1,6 @@
 package com.task.management.service;
 
-import com.task.management.annotation.LogAfterReturning;
-import com.task.management.annotation.LogAfterThrowing;
-import com.task.management.annotation.LogBefore;
-import com.task.management.annotation.LogExecution;
+import com.starter.apilogger.annotation.LoggableApi;
 import com.task.management.domain.Task;
 import com.task.management.dto.TaskDto;
 import com.task.management.dto.TaskStatusUpdateDto;
@@ -35,8 +32,7 @@ public class TaskService {
     @Value("${spring.kafka.topic.name}")
     private String topicName;
 
-    @LogExecution
-    @LogAfterThrowing
+    @LoggableApi
     public TaskDto addTask(TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
         this.taskRepository.save(task);
@@ -44,13 +40,12 @@ public class TaskService {
         return taskMapper.toTaskDto(task);
     }
 
-
-    @LogBefore
+    @LoggableApi
     public Optional<TaskDto> getTaskById(Long taskId) {
         return this.taskRepository.findById(taskId).map(taskMapper::toTaskDto);
     }
 
-    @LogAfterThrowing
+    @LoggableApi
     public void deleteTaskById(Long taskId) {
         Optional<TaskDto> taskOptional =
                 this.taskRepository.findById(taskId).map(taskMapper::toTaskDto);
@@ -61,8 +56,7 @@ public class TaskService {
         this.taskRepository.deleteById(taskId);
     }
 
-    @LogAfterThrowing
-    @LogExecution
+    @LoggableApi
     @Transactional
     public TaskDto updateTaskById(Long taskId, TaskDto updatedTask) {
 
@@ -96,7 +90,7 @@ public class TaskService {
         return updatedTask;
     }
 
-    @LogAfterReturning
+    @LoggableApi
     public List<TaskDto> getAllTasks() {
         return taskRepository.findAll().stream().map(taskMapper::toTaskDto).toList();
     }

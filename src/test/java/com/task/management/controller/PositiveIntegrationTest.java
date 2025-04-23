@@ -1,6 +1,7 @@
 package com.task.management.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.task.management.MockKafkaConfig;
 import com.task.management.PostgresContainer;
 import com.task.management.domain.Task;
 import com.task.management.dto.TaskDto;
@@ -9,9 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -23,7 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@EnableAutoConfiguration(exclude = {
+        KafkaAutoConfiguration.class
+})
+@Import(MockKafkaConfig.class) //исключаем конфигурацию Kafka для тестирования
 public class PositiveIntegrationTest extends PostgresContainer {
 
     @Autowired
@@ -39,6 +45,7 @@ public class PositiveIntegrationTest extends PostgresContainer {
     void cleanUp() {
         taskRepository.deleteAll();
     }
+
 
     @Test
     @DisplayName("Интеграционный тест для добавления задачи")

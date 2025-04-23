@@ -34,15 +34,6 @@ spring:
      name: task-status-topic
     consumer:
       max-poll-records: 5
-#logging:
-#  level:
-#    org.apache.kafka: INFO
-#    root: INFO
-#    com:
-#      task.management.controllers.TaskController: DEBUG
-#  pattern:
-#    file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-#    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 springdoc:
   api-docs:

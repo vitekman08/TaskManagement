@@ -27,7 +27,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Получение задачи по id")
-    public Optional<TaskDto> getTask(@PathVariable Long id) {
+    public Optional<TaskDto> getTask(@PathVariable("id") Long id) {
 
         return taskService.getTaskById(id);
     }
@@ -40,7 +40,7 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление задачи по id")
-    public void deleteTask(@PathVariable Long id) {
+    public void deleteTask(@PathVariable("id") Long id) {
         taskService.deleteTaskById(id);
     }
 

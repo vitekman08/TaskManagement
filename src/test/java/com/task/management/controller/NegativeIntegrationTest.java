@@ -1,13 +1,17 @@
 package com.task.management.controller;
 
 
+import com.task.management.MockKafkaConfig;
 import com.task.management.PostgresContainer;
 import com.task.management.dto.TaskDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,6 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@EnableAutoConfiguration(exclude = {
+        KafkaAutoConfiguration.class
+})
+@Import(MockKafkaConfig.class)
 public class NegativeIntegrationTest extends PostgresContainer {
 
     @Autowired
